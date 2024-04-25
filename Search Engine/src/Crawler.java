@@ -55,7 +55,6 @@ public class Crawler implements Runnable{
             }
             try {
                 URI uri1 = new URI(url1);
-
                 url1 = uri1.normalize().toString();
             }
 
@@ -138,7 +137,7 @@ public class Crawler implements Runnable{
 
     }
 
-    public void crawl()
+    public Set<String> crawl()
     {
         if(allWebPages.size()==0)
         {
@@ -161,6 +160,7 @@ public class Crawler implements Runnable{
             // Wait for all threads to finish
         }
         System.out.println("Crawling ended successfully and crawled " + visitedWebPages.size() +"\n");
+        return visitedWebPages;
     }
 
     private void startSeed()
