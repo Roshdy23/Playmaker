@@ -21,7 +21,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/Dependencies/mongo/bson-3.12.14.jar!/" />
+          <root url="jar://$MODULE_DIR$/src/jsoup-1.16.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -30,7 +30,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/Dependencies/mongo/mongodb-driver-3.12.14.jar!/" />
+          <root url="jar://$MODULE_DIR$/src/lucene-analyzers-common-8.8.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -39,7 +39,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/Dependencies/mongo/mongodb-driver-core-3.12.14.jar!/" />
+          <root url="jar://$MODULE_DIR$/src/snowball-stemmer-1.3.0.581.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -48,7 +48,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/Dependencies/lucene-snowball-3.0.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/src/mongo-java-driver-3.12.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

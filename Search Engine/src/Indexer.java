@@ -161,7 +161,7 @@ public class Indexer {
                 siteWords.add(word);
             switch (priority){
                 case 0:
-                tf0.put(word, tf0.get(word)==null?1:tf0.get(word)+1);
+                    tf0.put(word, tf0.get(word)==null?1:tf0.get(word)+1);
                     break;
                 case 1:
                     tf1.put(word, tf1.get(word)==null?1:tf1.get(word)+1);
