@@ -86,11 +86,16 @@ public class Indexer {
                 IndexesCollection.insertOne(ientry);
             }
         }
-        String content = site.select("title, h1, h2, h3, h4, h5, h6 p, code, b, a, strong, i, em, blockquote, span").text();
-        content+=" ";
-        content+= site.select("meta[name=description]").attr("content");
-        org.bson.Document centry = new org.bson.Document("content",content);
+        StringBuilder content = new StringBuilder();
+        content.append(site.select("title, h1, h2, h3, h4, h5, h6 p, code, b, a, strong, i, em, blockquote, span").text()).append(" ");
+        String title = site.select("title").text();
+        String Description = site.select("meta[name=description]").attr("content");
+        content.append(Description);
+        String Content = content.toString();
+        org.bson.Document centry = new org.bson.Document("content",Content);
         centry.append("url",url);
+        centry.append("description",Description);
+        centry.append("title",title);
         org.bson.Document query = new org.bson.Document("url",url);
         if(ContentCollection.find(query).first()!=null)
         {
@@ -156,7 +161,7 @@ public class Indexer {
                 siteWords.add(word);
             switch (priority){
                 case 0:
-                tf0.put(word, tf0.get(word)==null?1:tf0.get(word)+1);
+                    tf0.put(word, tf0.get(word)==null?1:tf0.get(word)+1);
                     break;
                 case 1:
                     tf1.put(word, tf1.get(word)==null?1:tf1.get(word)+1);
