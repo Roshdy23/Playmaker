@@ -7,10 +7,12 @@ export const StateContextProvider = ({ children }) => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchTime, setSearchTime] = useState(0);
 
   const getResults = async (url) => {
+    const currentTime = performance.now();
     setLoading(true);
-
+ 
     console.log(url);
 
     const res = await fetch(`${baseUrl}${url}`, {
@@ -24,11 +26,12 @@ export const StateContextProvider = ({ children }) => {
     const data = await res.json();
     console.log(data);
     setResults(data);
+    setSearchTime(performance.now()- currentTime);
     setLoading(false);
   };
 
   return (
-    <StateContext.Provider value={{ getResults, results, searchTerm, setSearchTerm, loading }}>
+    <StateContext.Provider value={{ getResults, results, searchTerm, setSearchTerm, loading,searchTime, setSearchTime }}>
       {children}
     </StateContext.Provider>
   );
