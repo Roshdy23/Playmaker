@@ -15,17 +15,182 @@ export const StateContextProvider = ({ children }) => {
  
     console.log(url);
 
-    const res = await fetch(`${baseUrl}${url}`, {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': '8552045084msh735644ab1c73cf4p1d278fjsnaf8d906ddec3',
-        'X-RapidAPI-Host': 'google-web-search1.p.rapidapi.com'
+    // const res = await fetch(`${baseUrl}${url}`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'X-RapidAPI-Key': '8552045084msh735644ab1c73cf4p1d278fjsnaf8d906ddec3',
+    //     'X-RapidAPI-Host': 'google-web-search1.p.rapidapi.com'
+    //   },
+    // }); 
+    
+
+    const temp = [
+      {
+          title: 'Example Website 1',
+          url: 'https://www.example.com/1',
+          description: 'This is an example snippet containing the query words.',
       },
-    }); 
+      {
+          title: 'Example Website 2',
+          url: 'https://www.example.com/2',
+          description: 'Another example snippet with the query words highlighted.',
+      },
+      {
+        title: 'Example Website 1',
+        url: 'https://www.example.com/1',
+        description: 'This    is an example snippet containing the query words.',
+    },
+    {
+        title: 'Example Website 2',
+        url: 'https://www.example.com/2',
+        description: 'Another example snippet with the query words highlighted.',
+    },
+    {
+      title: 'Example Website 1',
+      url: 'https://www.example.com/1',
+      description: 'This is an example snippet containing the query words.',
+  },
+  {
+      title: 'Example Website 2',
+      url: 'https://www.example.com/2',
+      description: 'Another example snippet with the query words highlighted.',
+  },
+  {
+    title: 'Example Website 1',
+    url: 'https://www.example.com/1',
+    description: 'This    is an example snippet containing the query words.',
+},
+{
+    title: 'Example Website 2',
+    url: 'https://www.example.com/2',
+    description: 'Another example snippet with the query words highlighted.',
+},
+{
+  title: 'Example Website 1',
+  url: 'https://www.example.com/1',
+  description: 'This is an example snippet containing the query words.',
+},
+{
+  title: 'Example Website 2',
+  url: 'https://www.example.com/2',
+  description: 'Another example snippet with the query words highlighted.',
+},
+{
+title: 'Example Website 1',
+url: 'https://www.example.com/1',
+description: 'This    is an example snippet containing the query words.',
+},
+{
+title: 'Example Website 2',
+url: 'https://www.example.com/2',
+description: 'Another example snippet with the query words highlighted.',
+},
+{
+  title: 'Example Website 1',
+  url: 'https://www.example.com/1',
+  description: 'This is an example snippet containing the query words.',
+},
+{
+  title: 'Example Website 2',
+  url: 'https://www.example.com/2',
+  description: 'Another example snippet with the query words highlighted.',
+},
+{
+title: 'Example Website 1',
+url: 'https://www.example.com/1',
+description: 'This    is an example snippet containing the query words.',
+},
+{
+title: 'Example Website 2',
+url: 'https://www.example.com/2',
+description: 'Another example snippet with the query words highlighted.',
+},
+{
+  title: 'Example Website 1',
+  url: 'https://www.example.com/1',
+  description: 'This is an example snippet containing the query words.',
+},
+{
+  title: 'Example Website 2',
+  url: 'https://www.example.com/2',
+  description: 'Another example snippet with the query words highlighted.',
+},
+{
+title: 'Example Website 1',
+url: 'https://www.example.com/1',
+description: 'This    is an example snippet containing the query words.',
+},
+{
+title: 'Example Website 2',
+url: 'https://www.example.com/2',
+description: 'Another example snippet with the query words highlighted.',
+},
+{
+  title: 'Example Website 1',
+  url: 'https://www.example.com/1',
+  description: 'This is an example snippet containing the query words.',
+},
+{
+  title: 'Example Website 2',
+  url: 'https://www.example.com/2',
+  description: 'Another example snippet with the query words highlighted.',
+},
+{
+title: 'Example Website 1',
+url: 'https://www.example.com/1',
+description: 'This    is an example snippet containing the query words.',
+},
+{
+title: 'Example Website 2',
+url: 'https://www.example.com/2',
+description: 'Another example snippet with the query words highlighted.',
+},
+{
+  title: 'Example Website 1',
+  url: 'https://www.example.com/1',
+  description: 'This is an example snippet containing the query words.',
+},
+{
+  title: 'Example Website 2',
+  url: 'https://www.example.com/2',
+  description: 'Another example snippet with the query words highlighted.',
+},
+{
+title: 'Example Website 1',
+url: 'https://www.example.com/1',
+description: 'This    is an example snippet containing the query words.',
+},
+{
+title: 'Example Website 2',
+url: 'https://www.example.com/2',
+description: 'Another example snippet with the query words highlighted.',
+},
+{
+  title: 'Example Website 1',
+  url: 'https://www.example.com/1',
+  description: 'This is an example snippet containing the query words.',
+},
+{
+  title: 'Example Website 2',
+  url: 'https://www.example.com/2',
+  description: 'Another example snippet with the query words highlighted.',
+},
+{
+title: 'Example Website 1',
+url: 'https://www.example.com/1',
+description: 'This    is an example snippet containing the query words.',
+},
+{
+title: 'Example Website 2',
+url: 'https://www.example.com/2',
+description: 'Another example snippet with the query words highlighted.',
+},
+  ];
+
   
-    const data = await res.json();
-    console.log(data);
-    setResults(data);
+    // const data = await res.json();
+    // console.log(data);
+    setResults(temp);
     setSearchTime(performance.now()- currentTime);
     setLoading(false);
   };
