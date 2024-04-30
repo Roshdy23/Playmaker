@@ -5,7 +5,7 @@ import {useStateContext} from '../Contexts/StateContextProvider'
 export const Search = () => {
 
   const [text,setText] =useState("");
-  const {setSearchTerm}=useStateContext();
+  const {setSearchTerm,searchTime}=useStateContext();
   const [debouncedvalue]=useDebounce(text,350);
 
   // useEffect(()=>{
@@ -14,6 +14,7 @@ export const Search = () => {
 
 const nwfunc = (par) => {
    setSearchTerm(par);
+
    setText('');
   };
 
@@ -35,7 +36,7 @@ const nwfunc = (par) => {
       )}
       
 
-  
+      <p className='text-gray-500 text-sm ml-4 mt-2'>Search time : {searchTime.toFixed(2) } ms</p>
       </div>
   )
 }
