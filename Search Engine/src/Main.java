@@ -14,16 +14,16 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class Main {
     public static void main(String[] args) {
 //        MongoDatabase mongoDatabase = new MongoDatabase();
-//        Crawler c=new Crawler();
-//        Set<String> sites = c.crawl();
+        Crawler c=new Crawler();
+        Set<String> sites = c.crawl();
 //        Indexer indexer = new Indexer(sites,mongoDatabase.getCollection("Indexes"),mongoDatabase.getCollection("Content"));
 //        indexer.index();
-        QueryProcessor q = new QueryProcessor();
-        List<Document> list = q.Search("\"Live Soccer Scores\"");
-        for (Document doc : list) {
-            System.out.println(doc.getString("url"));
-            System.out.println(doc.getString("title"));
-            System.out.println(doc.getString("description"));
-        }
+//        QueryProcessor q = new QueryProcessor();
+//        List<Document> list = q.Search("\"Live Soccer Scores\"");
+//        for (Document doc : list) {
+//            System.out.println(doc.getString("url"));
+//            System.out.println(doc.getString("title"));
+//            System.out.println(doc.getString("description"));
+//        }
     }
 }
