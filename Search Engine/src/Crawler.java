@@ -6,9 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Document;
 
 import javax.print.Doc;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Queue;
@@ -71,7 +69,23 @@ public class Crawler implements Runnable{
 
                         if(doc!=null) {
                             System.out.println("now iam crawling " + url1 + "and iam " + Thread.currentThread().getName());
+
                             crawlPage(doc);
+
+                            File file = new File("C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\crawled.txt");
+
+                            try {
+                                FileWriter fw=new FileWriter(file,true);
+
+                                BufferedWriter bufferedWriter = new BufferedWriter(fw);
+                                bufferedWriter.write(url1 );
+                                bufferedWriter.newLine();
+                                bufferedWriter.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+
+
                         }
                         else
                             continue;
@@ -101,6 +115,19 @@ public class Crawler implements Runnable{
                 if(visitedWebPages.contains(nextLink)==false)
                 {
                     allWebPages.add(nextLink);
+                    File file = new File("C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\tobeCrawled.txt");
+
+                    try {
+                        FileWriter fw=new FileWriter(file,true);
+
+                        BufferedWriter bufferedWriter = new BufferedWriter(fw);
+                        bufferedWriter.write(nextLink  );
+                        bufferedWriter.newLine();
+
+                        bufferedWriter.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
                 if(visitedWebPages.size()>=maxDepth)return;
@@ -139,6 +166,9 @@ public class Crawler implements Runnable{
 
     public Set<String> crawl()
     {
+        init();
+
+
         if(allWebPages.size()==0)
         {
             startSeed();
@@ -163,9 +193,37 @@ public class Crawler implements Runnable{
         return visitedWebPages;
     }
 
+    private void init()
+    {
+        String filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\crawled.txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                visitedWebPages.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\tobeCrawled.txt";
+        int cnt =0 ;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null && cnt<maxDepth && !visitedWebPages.contains(line)) {
+                allWebPages.add(line);
+                cnt++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
     private void startSeed()
     {
-        String filename = "src/Seed.txt";
+        String filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\Seed.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
