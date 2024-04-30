@@ -5,19 +5,64 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import com.mongodb.client.model.Aggregates;
+
+import javax.print.Doc;
 
 public class Ranker {
 
     public static void main(String[] argv) {
-        //
-        calculateScoreForEachWord();
+        QueryProcessor q = new QueryProcessor();
+        List<Document> allURLs = q.Search("today matches");
+        List<Document> phraseURLs = q.Search("\"today matches\"");
+        for(Document res: phraseURLs) {
+            System.out.println(res.getString("url"));
+        }
+        List<Document> restults = rankPages(allURLs, phraseURLs);
+        for(Document res: restults) {
+            System.out.println(res.getString("url"));
+            System.out.println(res.getDouble("score"));
+        }
     }
+    public static List<Document> rankPages(List<Document> urls, List<Document> phraseURLs) {
+        List<Document> scoredURLs = AddScoreForPages(urls);
+        // Add extra score for URLS resulted from phrase matching
+        for(Document url: scoredURLs) {
+            for(Document phURL: phraseURLs) {
+                if(phURL.getString("url").equals(url.getString("url"))) {
+                    // Add 1 to the original score
+                    double score = url.getDouble("score") + 1;
+                    url.put("score", score);
+                }
+            }
+        }
+        Comparator<Document> comparator = (doc1, doc2) -> {
+            double score1 = doc1.getDouble("score");
+            double score2 = doc2.getDouble("score");
+            return Double.compare(score2, score1);
+        };
+        scoredURLs.sort(comparator);
+        return scoredURLs;
+    }
+    public static List<Document> AddScoreForPages(List<Document> urls) {
+        MongoCollection<Document> indexes = (new MongoDatabase()).getCollection("Indexes");
+        List<Document> words = indexes.find().into(new ArrayList<>());
+        for(Document url: urls) {
+            url.append("score", 0.0);
+        }
+        for(Document word: words) {
+            for(Document url: urls) {
+                if(word.getString("url").equals(url.getString("url"))) {
+                    double tmp = url.getDouble("score") + word.getDouble("score");
+                    url.put("score", tmp);
+                }
+            }
+        }
+        return urls;
+    }
+
     public static void calculateIDF() {
         MongoCollection<Document> indexes = (new MongoDatabase()).getCollection("Indexes");
         MongoCollection<Document> content = (new MongoDatabase()).getCollection("Content");
