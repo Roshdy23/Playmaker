@@ -1,5 +1,6 @@
 
 
+import com.mongodb.client.MongoCollection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Element;
@@ -7,15 +8,13 @@ import org.jsoup.nodes.Document;
 
 import javax.print.Doc;
 import java.awt.*;
+import java.awt.List;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
@@ -34,10 +33,10 @@ public class Crawler implements Runnable {
 
     private Queue<String> allWebPages = new ConcurrentLinkedQueue<>();
 
-   private  HashMap<String, Boolean> disAllowed = new HashMap<>();
+    private  HashMap<String, Boolean> disAllowed = new HashMap<>();
 
-
-    public static final int maxDepth = 5;
+    private static MongoCollection<org.bson.Document> PageLinksCollection;
+    public static final int maxDepth = 20;
 
     @Override
     public void run() {
@@ -53,32 +52,45 @@ public class Crawler implements Runnable {
                 url1 = allWebPages.poll();
             }
 
-                if (url1 == null) {
-                    System.out.println(" url is null");
-                    continue;
-                }
-                try {
-                    URI uri1 = new URI(url1);
-                    url1 = uri1.normalize().toString();
-                    robotUrl = url1 + "/robots.txt";
-                } catch (URISyntaxException e) {
-                    System.out.println("invalid URL");
-                    continue;
-                }
+            if (url1 == null) {
+                System.out.println(" url is null");
+                continue;
+            }
+            try {
+                URI uri1 = new URI(url1);
+                url1 = uri1.normalize().toString();
+                robotUrl = url1 + "/robots.txt";
+            } catch (URISyntaxException e) {
+                System.out.println("invalid URL");
+                continue;
+            }
 
 
             synchronized (visitedWebPages) {
 
-                if (visitedWebPages.contains(url1) == false &&isAllowedUrl(url1)) {
+                if (visitedWebPages.contains(url1) == false && isAllowedUrl(url1)) {
 
                     Document doc = request(url1);
 
                     if (doc != null) {
                         System.out.println("now iam crawling " + url1 + "and iam " + Thread.currentThread().getName());
 
-                        crawlPage(doc);
+                        Vector<String> docLinks = crawlPage(doc);
 
-                        File file = new File("C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\crawled.txt");
+                        org.bson.Document centry = new org.bson.Document("url",url1);
+                        centry.append("links", docLinks);
+
+                        org.bson.Document query = new org.bson.Document("url",url1);
+                        if(PageLinksCollection.find(query).first()!=null)
+                        {
+                            PageLinksCollection.findOneAndReplace(query,centry);
+                        }
+                        else {
+                            PageLinksCollection.insertOne(centry);
+                        }
+
+
+                        File file = new File("/home/abdallah/IdeaProjects/Search-Engine/Search Engine/src/crawled.txt");
 
                         try {
                             FileWriter fw = new FileWriter(file, true);
@@ -105,9 +117,14 @@ public class Crawler implements Runnable {
 
     }
 
-    private void crawlPage(Document doc) {
+    private Vector<String> crawlPage(Document doc) {
+        Vector<String> docLinks = new Vector<>();
+
         for (Element link : doc.select("a[href]")) {
             String nextLink = link.absUrl("href");
+
+            docLinks.add(nextLink);
+
 
             try {
 
@@ -115,10 +132,10 @@ public class Crawler implements Runnable {
                 URI nextLinkUri = new URI(nextLink);
 
                 nextLink = nextLinkUri.normalize().toString();
-              String  robotUrl = nextLink + "/robots.txt";
+                String  robotUrl = nextLink + "/robots.txt";
                 if (!visitedWebPages.contains(nextLink) && isAllowedUrl(nextLink)&&nextLink!=null) {
                     allWebPages.add(nextLink);
-                    File file = new File("C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\tobeCrawled.txt");
+                    File file = new File("/home/abdallah/IdeaProjects/Search-Engine/Search Engine/src/tobeCrawled.txt");
 
                     try {
                         FileWriter fw = new FileWriter(file, true);
@@ -133,7 +150,7 @@ public class Crawler implements Runnable {
                     }
                 }
 
-                if (visitedWebPages.size() >= maxDepth) return;
+                if (visitedWebPages.size() >= maxDepth) return docLinks;
 
             } catch (URISyntaxException e) {
                 System.out.println("invalid url");
@@ -142,6 +159,7 @@ public class Crawler implements Runnable {
 
 
         }
+        return docLinks;
     }
 
     private Document request(String url) {
@@ -163,7 +181,8 @@ public class Crawler implements Runnable {
 
     public Set<String> crawl() {
         init();
-
+        MongoDatabase db = new MongoDatabase();
+        PageLinksCollection = db.getCollection("PageLinks");
 
         if (allWebPages.size() == 0) {
             startSeed();
@@ -189,7 +208,7 @@ public class Crawler implements Runnable {
     }
 
     private void init() {
-        String filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\crawled.txt";
+        String filename = "/home/abdallah/IdeaProjects/Search-Engine/Search Engine/src/crawled.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -201,7 +220,7 @@ public class Crawler implements Runnable {
         }
 
 
-        filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\tobeCrawled.txt";
+        filename = "/home/abdallah/IdeaProjects/Search-Engine/Search Engine/src/crawled.txt";
         int cnt = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -218,7 +237,7 @@ public class Crawler implements Runnable {
     }
 
     private void startSeed() {
-        String filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\Seed.txt";
+        String filename = "/home/abdallah/IdeaProjects/Search-Engine/Search Engine/src/Seed.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -249,12 +268,16 @@ public class Crawler implements Runnable {
                 if (line.startsWith("User-agent: *")) {
                     while ((line = reader.readLine()) != null && !line.trim().isEmpty()) {
                         if (line.trim().startsWith("Disallow:")) {
-                            String disallowedPath = line.substring(10).trim();
-                            String disallowedUrl = url.getProtocol() + "://" + url.getHost() + disallowedPath;
-                            if(robots.startsWith(disallowedUrl))
-                            {
-                                allowedToCrawl=false;
-                                break;
+                            try {
+                                String disallowedPath = line.substring(10).trim();
+                                String disallowedUrl = url.getProtocol() + "://" + url.getHost() + disallowedPath;
+                                if(robots.startsWith(disallowedUrl))
+                                {
+                                    allowedToCrawl=false;
+                                    break;
+                                }
+                            } catch (StringIndexOutOfBoundsException ex) {
+                                allowedToCrawl = false;
                             }
                         }
                     }
@@ -265,11 +288,11 @@ public class Crawler implements Runnable {
             reader.close();
 
             if (allowedToCrawl) {
-            disAllowed.put(robots,true);
-             return true;
+                disAllowed.put(robots,true);
+                return true;
             } else {
                 disAllowed.put(robots,false);
-             return false;
+                return false;
             }
         } catch (IOException e) {
             disAllowed.put(robots,false);
