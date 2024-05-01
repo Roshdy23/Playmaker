@@ -1,33 +1,27 @@
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates;
 import org.bson.Document;
 
 import java.util.*;
-
-import com.mongodb.client.model.Aggregates;
-
-import javax.print.Doc;
 
 public class Ranker {
 
     public static void main(String[] argv) {
         QueryProcessor q = new QueryProcessor();
-        List<Document> allURLs = q.Search("today matches");
-        List<Document> phraseURLs = q.Search("\"today matches\"");
+        List<Document> allURLs = q.Search("Real Madrid");
+        List<Document> phraseURLs = q.Search("\"Real Madrid\"");
         for(Document res: phraseURLs) {
             System.out.println(res.getString("url"));
         }
-        List<Document> restults = rankPages(allURLs, phraseURLs);
-        for(Document res: restults) {
+        List<Document> results = rankPages(allURLs, phraseURLs, "real madrid");
+        for(Document res: results) {
             System.out.println(res.getString("url"));
             System.out.println(res.getDouble("score"));
         }
     }
-    public static List<Document> rankPages(List<Document> urls, List<Document> phraseURLs) {
-        List<Document> scoredURLs = AddScoreForPages(urls);
+    public static List<Document> rankPages(List<Document> urls, List<Document> phraseURLs, String query) {
+        List<Document> scoredURLs = AddScoreForPages(urls, query);
         // Add extra score for URLS resulted from phrase matching
         for(Document url: scoredURLs) {
             for(Document phURL: phraseURLs) {
@@ -46,13 +40,22 @@ public class Ranker {
         scoredURLs.sort(comparator);
         return scoredURLs;
     }
-    public static List<Document> AddScoreForPages(List<Document> urls) {
+    public static List<Document> AddScoreForPages(List<Document> urls, String query) {
         MongoCollection<Document> indexes = (new MongoDatabase()).getCollection("Indexes");
         List<Document> words = indexes.find().into(new ArrayList<>());
+        String[] queryWords = query.split(" ");
         for(Document url: urls) {
             url.append("score", 0.0);
         }
         for(Document word: words) {
+            boolean flag = false;
+            for(String s: queryWords) {
+                if(s.equals(word.getString("word"))) {
+                    flag = true;
+                    break;
+                }
+            }
+            if(!flag) continue;
             for(Document url: urls) {
                 if(word.getString("url").equals(url.getString("url"))) {
                     double tmp = url.getDouble("score") + word.getDouble("score");
