@@ -1,8 +1,7 @@
-https://www.fifa.com
-https://www.uefa.com
-https://www.premierleague.com
-https://www.laliga.com
-https://www.bundesliga.com
-https://www.transfermarkt.com
-https://www.bbc.com
-https://www.ligue1.com
+https://www.sofascore.com/
+https://www.marca.com/en/
+https://www.manutd.com/
+https://www.realmadrid.com/en-US
+https://www.legaseriea.it/en
+https://www.premierleague.com/
+https://www.goal.com/en-us
