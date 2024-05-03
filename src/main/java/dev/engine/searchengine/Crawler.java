@@ -122,7 +122,7 @@ public class Crawler implements Runnable {
                                 synchronized (allwebpages) {
                                     allwebpages.add(normalizedNextUrl);
 
-                                    File file = new File("C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\tobeCrawled.txt");
+                                    File file = new File("/home/abdallah/IdeaProjects/SearchEngine/src/main/resources/tobeCrawled.txt");
 
                                     try {
                                         FileWriter fw = new FileWriter(file, true);
@@ -156,7 +156,7 @@ public class Crawler implements Runnable {
                         PageLinksCollection.insertOne(centry);
                     }
 
-                    File file = new File("C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\crawled.txt");
+                    File file = new File("/home/abdallah/IdeaProjects/SearchEngine/src/main/resources/crawled.txt");
 
                     try {
                         FileWriter fw = new FileWriter(file, true);
@@ -210,7 +210,7 @@ public class Crawler implements Runnable {
     }
 
     private void init() {
-        String filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\crawled.txt";
+        String filename = "/home/abdallah/IdeaProjects/SearchEngine/src/main/resources/crawled.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -222,7 +222,7 @@ public class Crawler implements Runnable {
         }
 
 
-        filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\tobeCrawled.txt";
+        filename = "/home/abdallah/IdeaProjects/SearchEngine/src/main/resources/tobeCrawled.txt";
         int cnt = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -239,7 +239,7 @@ public class Crawler implements Runnable {
     }
 
     private void startSeed() {
-        String filename = "C:\\Users\\elros\\OneDrive\\Documents\\Search Engine\\Search-Engine\\Search Engine\\src\\Seed.txt";
+        String filename = "/home/abdallah/IdeaProjects/SearchEngine/src/main/resources/Seed.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
