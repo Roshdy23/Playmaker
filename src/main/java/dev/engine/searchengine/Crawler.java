@@ -1,3 +1,4 @@
+package dev.engine.searchengine;
 
 import com.mongodb.client.MongoCollection;
 import org.jsoup.Jsoup;

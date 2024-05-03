@@ -54,7 +54,8 @@ public class Ranker {
         for(Document doc: scoredURLs) {
             for(Document page: pages) {
                 if(page.getString("url").equals(doc.getString("url"))) {
-                    double tmp = doc.getDouble("score") + page.getDouble("popularity");
+                    double tmp = doc.getDouble("score");
+                    tmp = tmp + page.getDouble("popularity");
                     doc.put("score", tmp);
                 }
             }

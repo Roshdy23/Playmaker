@@ -1,3 +1,4 @@
+package dev.engine.searchengine;
 
 import java.io.IOException;
 import java.io.BufferedReader;

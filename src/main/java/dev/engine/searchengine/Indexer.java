@@ -1,3 +1,5 @@
+package dev.engine.searchengine;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -128,12 +130,12 @@ public class Indexer {
         String highlights = site.select("b, strong, i, em, blockquote, span, a").text();
         String content = site.select("p, code").text();
         String h46 = site.select("h4, h5, h6").text();
-        title = com.example.lib.RemoveStopWords.removeStopWords(title);
-        h13 = com.example.lib.RemoveStopWords.removeStopWords(h13);
-        description = com.example.lib.RemoveStopWords.removeStopWords(description);
-        highlights = com.example.lib.RemoveStopWords.removeStopWords(highlights);
-        content = com.example.lib.RemoveStopWords.removeStopWords(content);
-        h46 = com.example.lib.RemoveStopWords.removeStopWords(h46);
+        title = RemoveStopWords.removeStopWords(title);
+        h13 = RemoveStopWords.removeStopWords(h13);
+        description = RemoveStopWords.removeStopWords(description);
+        highlights = RemoveStopWords.removeStopWords(highlights);
+        content = RemoveStopWords.removeStopWords(content);
+        h46 = RemoveStopWords.removeStopWords(h46);
         lexify(title,0);
         lexify(h13,1);
         lexify(description,2);

@@ -1,3 +1,5 @@
+package dev.engine.searchengine;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.bson.Document;

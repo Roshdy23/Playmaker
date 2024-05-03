@@ -1,4 +1,4 @@
-package com.example.lib;
+package dev.engine.searchengine;
 public class RemoveStopWords {
     private static final String[] STOP_WORDS = { "I", "a", "above", "after",
             "against", "all", "alone", "always", "am", "amount", "an",
