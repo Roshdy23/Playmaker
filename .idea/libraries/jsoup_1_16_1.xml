@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="jsoup-1.16.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Libraries/jsoup-1.16.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/lucene-analyzers-common-8.8.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/mongo-java-driver-3.12.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Libraries/snowball-stemmer-1.3.0.581.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
