@@ -1,4 +1,4 @@
-# Search Engine
+# Playmaker
 This project is a search engine, including web crawling, indexing, ranking, and query processing.
 
 ## Built With
