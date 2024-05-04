@@ -9,30 +9,26 @@ import javax.print.Doc;
 import java.time.LocalTime;
 import java.util.*;
 
-public class Ranker {
-    private  static MongoCollection<Document> indexes;
-    private  static  List<Document> words;
-    private static MongoCollection<Document> pageLinks;
-    private static List<Document> pages;
-    public static void main(String[] argv) {
-        indexes = (new MongoDatabase()).getCollection("Indexes");
-        words = indexes.find().into(new ArrayList<>());
-        pageLinks = (new MongoDatabase()).getCollection("PageLinks");
-        pages = pageLinks.find().into(new ArrayList<>());
-        QueryProcessor q = new QueryProcessor();
-        List<Document> allURLs = q.Search("today matches");
-        List<Document> phraseURLs = q.Search("\"today matches\"");
-        for(Document res: phraseURLs) {
-            System.out.println(res.getString("url"));
-        }
-        System.out.println("Start Time Of Online Ranking: "+ LocalTime.now());
-        List<Document> results = rankPages(allURLs, phraseURLs, "today matches");
-        System.out.println("Finish Time Of Online Ranking: "+ LocalTime.now());
-        for(Document res: results) {
-            System.out.println(res.getString("url"));
-            System.out.println(res.getDouble("score"));
-        }
+import static dev.engine.searchengine.LinkRepository.pageLinksList;
+import static dev.engine.searchengine.LinkRepository.indexesList;
 
+public class Ranker {
+
+    public static void main(String[] argv) {
+
+//        QueryProcessor q = new QueryProcessor();
+//        List<Document> allURLs = q.Search("today matches");
+//        List<Document> phraseURLs = q.Search("\"today matches\"");
+//        for(Document res: phraseURLs) {
+//            System.out.println(res.getString("url"));
+//        }
+//        System.out.println("Start Time Of Online Ranking: "+ LocalTime.now());
+//        List<Document> results = rankPages(allURLs, phraseURLs, "today matches");
+//        System.out.println("Finish Time Of Online Ranking: "+ LocalTime.now());
+//        for(Document res: results) {
+//            System.out.println(res.getString("url"));
+//            System.out.println(res.getDouble("score"));
+//        }
 
     }
     public static List<Document> rankPages(List<Document> urls, List<Document> phraseURLs, String query) {
@@ -52,7 +48,7 @@ public class Ranker {
 //        MongoCollection<Document> pageLinks = (new MongoDatabase()).getCollection("PageLinks");
 //        List<Document> pages = pageLinks.find().into(new ArrayList<>());
         for(Document doc: scoredURLs) {
-            for(Document page: pages) {
+            for(Document page: pageLinksList) {
                 if(page.getString("url").equals(doc.getString("url"))) {
                     double tmp = doc.getDouble("score");
                     tmp = tmp + page.getDouble("popularity");
@@ -75,7 +71,7 @@ public class Ranker {
         for(Document url: urls) {
             url.append("score", 0.0);
         }
-        for(Document word: words) {
+        for(Document word: indexesList) {
             boolean flag = false;
             for(String s: queryWords) {
                 if(s.equals(word.getString("word"))) {
@@ -116,7 +112,9 @@ public class Ranker {
         // Retrieve all documents from the collection
         MongoCollection<Document> collection = (new MongoDatabase()).getCollection("Indexes");
         List<Document> documents = collection.find().into(new ArrayList<>());
+        int c=0;
         for (Document doc : documents) {
+            ++c;
             double tf0 = doc.getInteger("tf0") * 0.001;
             double tf1 = doc.getInteger("tf1") * 0.0005;
             double tf2 = doc.getInteger("tf2") * 0.00025 ;
@@ -131,6 +129,7 @@ public class Ranker {
                     new Document("$set", new Document("score", score)),
                     new UpdateOptions().upsert(true)
             );
+            System.out.println("Done number " + c );
         }
     }
     public static void calculatePopularityOfPages(int numberOfIterations) {

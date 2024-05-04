@@ -6,7 +6,8 @@ import com.mongodb.client.FindIterable;
 import org.bson.Document;
 
 import org.tartarus.snowball.ext.PorterStemmer;
-
+import static dev.engine.searchengine.LinkRepository.contentList;
+import static dev.engine.searchengine.LinkRepository.indexesList;
 
 public class QueryProcessor {
 

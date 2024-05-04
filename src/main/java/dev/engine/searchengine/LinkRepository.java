@@ -5,8 +5,11 @@ import jakarta.annotation.PostConstruct;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static dev.engine.searchengine.Ranker.rankPages;
 
 @Repository
 public class LinkRepository {
@@ -27,10 +30,14 @@ public class LinkRepository {
     }
     List<Link> search(String query) {
         List<Link> ret = new ArrayList<>();
-        for(Document doc: contentList) {
-            ret.add(new Link(doc.getString("url"),
-                    doc.getString("content"),doc.getString("description"),
-                    doc.getString("title")));
+        QueryProcessor q = new QueryProcessor();
+        List<Document> allURLs = q.Search(query);
+        List<Document> phraseURLs = q.Search("\"" + query +"\"");
+        System.out.println("Start Time Of Online Ranking: "+ LocalTime.now());
+        List<Document> results = rankPages(allURLs, phraseURLs, query);
+        System.out.println("Finish Time Of Online Ranking: "+ LocalTime.now());
+        for(Document res: results) {
+            ret.add(new Link(res.getString("url"),res.getString("title"),res.getString("description"),"this is the  content"));
         }
         return ret;
     }
