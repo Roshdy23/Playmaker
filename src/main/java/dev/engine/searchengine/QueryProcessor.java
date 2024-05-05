@@ -6,6 +6,9 @@ import com.mongodb.client.FindIterable;
 import org.bson.Document;
 
 import org.tartarus.snowball.ext.PorterStemmer;
+
+import javax.print.Doc;
+
 import static dev.engine.searchengine.LinkRepository.contentList;
 import static dev.engine.searchengine.LinkRepository.indexesList;
 
@@ -96,15 +99,26 @@ public class QueryProcessor {
     public List<Document> Search(String s) {
         ArrayList<String> res = ProcessQuery(s);
         HashMap<String, Boolean> mp = new HashMap<String, Boolean>();
+        HashMap<String, Boolean> mp2 = new HashMap<String, Boolean>();
+        for (String t : res) {
+            mp2.put(t, true);
+        }
         ArrayList<String> ret = new ArrayList<String>();
-        MongoDatabase mongoDB = new MongoDatabase();
-        for (int i = 0; i < res.size(); i++) {
-            List<String> tmp = mongoDB.findUrlsWithWord("Indexes", res.get(i), "word");
-            for (String j : tmp) {
-                if (mp.get(j) != null)
-                    continue;
-                mp.put(j, true);
-                ret.add(j);
+//        for (int i = 0; i < res.size(); i++) {
+//            for (String j : tmp) {
+//                if (mp.get(j) != null)
+//                    continue;
+//                mp.put(j, true);
+//                ret.add(j);
+//            }
+//        }
+        for (Document doc : indexesList) {
+            if (mp2.get(doc.getString("word")) != null)
+            {
+                if (mp.get(doc.getString("url")) == null){
+                    mp.put(doc.getString("url"), true);
+                    ret.add(doc.getString("url"));
+                }
             }
         }
         PhraseSearcher P = new PhraseSearcher();
@@ -114,33 +128,26 @@ public class QueryProcessor {
                 SS += s.charAt(i);
             s = SS;
             mp.clear();
-            ArrayList<String> fin = new ArrayList<String>();
-            for (int i = 0;i < ret.size();i++)
-                fin.add(ret.get(i));
+            mp2.clear();
+            for (int i = 0; i < ret.size(); i++) {
+                mp2.put(ret.get(i), true);
+            }
             ret.clear();
-            for (int i = 0; i < fin.size(); i++) {
-                List<Document> tmp = mongoDB.findDocumentsByUrl("Content", fin.get(i));
-                for (Document j : tmp) {
-                    if (mp.get(j.getString("url")) != null)
-                        continue;
-                    String q = j.getString("content");
-                    if (q.contains(s)) {
-                        mp.put(j.getString("url"), true);
-                        ret.add(j.getString("url"));
-                    }
+            for(Document doc:contentList){
+                if (mp2.get(doc.getString("url")) == null)
+                    continue;
+                if(doc.getString("content").contains(s)){
+                    ret.add(doc.getString("url"));
                 }
             }
         }
-        HashMap<Document, Boolean> doc = new HashMap<Document, Boolean>();
-        List<Document> ToReturn = new ArrayList<>();
-        for (int i = 0; i < ret.size();i++){
-            List<Document> tmp = mongoDB.findDocumentsByUrl("Content", ret.get(i));
-            for(Document Doc:tmp){
-                if (doc.get(Doc)!=null)
-                    continue;
-                doc.put(Doc,true);
-                ToReturn.add(Doc);
-            }
+        mp2.clear();
+        for (int i = 0;i < ret.size(); i++)
+            mp2.put(ret.get(i),true);
+        List<Document>ToReturn = new ArrayList<Document>();
+        for(Document doc:contentList){
+            if (mp2.get(doc.getString("url")) != null)
+                ToReturn.add(doc);
         }
         return ToReturn;
     }
@@ -174,4 +181,3 @@ public class QueryProcessor {
     }
 
 }
-
