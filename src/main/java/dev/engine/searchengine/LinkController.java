@@ -15,6 +15,7 @@ public class LinkController {
     @CrossOrigin
     @GetMapping("{query}")
     List<Link> search(@PathVariable String query) {
+        linkRepository.addQueryForSuggestions(query);
         return linkRepository.search(query);
     }
 
