@@ -1,10 +1,7 @@
 package dev.engine.searchengine;
 
 import org.bson.Document;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,6 +12,7 @@ public class LinkController {
     public LinkController(LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
     }
+    @CrossOrigin
     @GetMapping("{query}")
     List<Link> search(@PathVariable String query) {
         return linkRepository.search(query);
