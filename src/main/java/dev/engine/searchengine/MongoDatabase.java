@@ -16,7 +16,7 @@ public class MongoDatabase {
     private com.mongodb.client.MongoDatabase mongoDatabase;
 
     public MongoDatabase() {
-        clientURI = new MongoClientURI("mongodb+srv://msayedelbohy:8MXR9t5np1blblhr@playmaker.zsurogn.mongodb.net/");
+        clientURI = new MongoClientURI("mongodb://localhost:27017/");
         mongoClient = new MongoClient(clientURI);
         mongoDatabase = mongoClient.getDatabase("Playmaker");
         System.out.println("Database connected");
