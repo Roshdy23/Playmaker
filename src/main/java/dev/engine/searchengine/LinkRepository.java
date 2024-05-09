@@ -17,6 +17,8 @@ public class LinkRepository {
     public static List<Document> indexesList;
     public static List<Document> contentList;
     public static List<Document> pageLinksList;
+    public static List<Document> previousQueriesList;
+    public static MongoCollection<Document> prvQ;
 
     @PostConstruct
     public void init() {
@@ -27,6 +29,8 @@ public class LinkRepository {
         contentList = content.find().into(new ArrayList<>());
         MongoCollection<Document> pageLinks = mongodb.getCollection("PageLinks");
         pageLinksList = pageLinks.find().into(new ArrayList<>());
+        prvQ = mongodb.getCollection("previousQueries");
+        previousQueriesList = prvQ.find().into(new ArrayList<>());
     }
     List<Link> search(String query) {
         List<Link> ret = new ArrayList<>();
@@ -40,5 +44,8 @@ public class LinkRepository {
             ret.add(new Link(res.getString("url"),res.getString("title"),res.getString("description"),"this is the  content"));
         }
         return ret;
+    }
+    void addQueryForSuggestions(String query) {
+        prvQ.insertOne(new Document("query", query));
     }
 }
