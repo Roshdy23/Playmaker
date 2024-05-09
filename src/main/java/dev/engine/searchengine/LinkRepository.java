@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,5 +48,20 @@ public class LinkRepository {
     }
     void addQueryForSuggestions(String query) {
         prvQ.insertOne(new Document("query", query));
+        MongoDatabase mongodb = new MongoDatabase();
+        prvQ = mongodb.getCollection("previousQueries");
+        previousQueriesList = prvQ.find().into(new ArrayList<>());
+    }
+    List<String> prevMatchedQueries(String query) {
+        List<String> ret = new ArrayList<>();
+        int c=0;
+        for(Document doc: previousQueriesList) {
+            if(doc.getString("query").startsWith(query)) {
+                ret.add(doc.getString("query"));
+                ++c;
+            }
+            if(c==5) break;
+        }
+        return ret;
     }
 }

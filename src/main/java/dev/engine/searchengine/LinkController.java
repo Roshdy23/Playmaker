@@ -18,5 +18,10 @@ public class LinkController {
         linkRepository.addQueryForSuggestions(query);
         return linkRepository.search(query);
     }
+    @CrossOrigin
+    @GetMapping("/prvQueries/{query}")
+    List<String> prvQueries(@PathVariable String query) {
+        return linkRepository.prevMatchedQueries(query);
+    }
 
 }
