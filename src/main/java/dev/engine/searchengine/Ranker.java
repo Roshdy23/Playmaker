@@ -14,7 +14,7 @@ import static dev.engine.searchengine.LinkRepository.indexesList;
 
 public class Ranker {
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws InterruptedException {
 
 //        QueryProcessor q = new QueryProcessor();
 //        List<Document> allURLs = q.Search("today matches");
@@ -29,7 +29,6 @@ public class Ranker {
 //            System.out.println(res.getString("url"));
 //            System.out.println(res.getDouble("score"));
 //        }
-
     }
     public static List<Document> rankPages(List<Document> urls, List<Document> phraseURLs, String query) {
         // 1- NORMAL SCORE ACCORDING TO TF-IDF SUMMATION
@@ -40,29 +39,29 @@ public class Ranker {
                 if(phURL.getString("url").equals(url.getString("url"))) {
                     // Add 1 to the original score
                     double score = url.getDouble("score") + 1;
-                    url.put("score", score);
+                    url.append("score", score);
                 }
             }
         }
-        // 3 - ADD POPULARITY TO THE SCORE OF THE PAGE
-//        MongoCollection<Document> pageLinks = (new MongoDatabase()).getCollection("PageLinks");
-//        List<Document> pages = pageLinks.find().into(new ArrayList<>());
-        for(Document doc: scoredURLs) {
-            for(Document page: pageLinksList) {
-                if(page.getString("url").equals(doc.getString("url"))) {
-                    double tmp = doc.getDouble("score");
-                    tmp = tmp + page.getDouble("popularity");
-                    doc.put("score", tmp);
-                }
-            }
-        }
+//         3 - ADD POPULARITY TO THE SCORE OF THE PAGE
+//        for(Document doc: scoredURLs) {
+//            for(Document page: pageLinksList) {
+//                if(page.getString("url").equals(doc.getString("url"))) {
+//                    double tmp = doc.getDouble("score");
+//                    tmp = tmp + page.getDouble("popularity");
+//                    doc.append("score", tmp);
+//                }
+//            }
+//        }
+        // 4- ADD URL SCORE
+        List<Document> ret = searchUrls(scoredURLs, query.split("\\s+"));
         Comparator<Document> comparator = (doc1, doc2) -> {
             double score1 = doc1.getDouble("score");
             double score2 = doc2.getDouble("score");
             return Double.compare(score2, score1);
         };
-        scoredURLs.sort(comparator);
-        return scoredURLs;
+        ret.sort(comparator);
+        return ret.subList(0, Math.min(ret.size(), 200));
     }
     public static List<Document> AddScoreForPages(List<Document> urls, String query) {
 //        MongoCollection<Document> indexes = (new MongoDatabase()).getCollection("Indexes");
@@ -89,7 +88,31 @@ public class Ranker {
         }
         return urls;
     }
+    public static List<Document> searchUrls(List<Document> urlDocuments, String[] queryWords) {
 
+        // Iterate through URL documents and calculate scores
+        for (Document document : urlDocuments) {
+            String url = document.getString("url");
+            if (url != null) {
+                double score = calculateScore(url, queryWords) + document.getDouble("score");
+                document.append("score", score);
+            }
+        }
+
+        return urlDocuments;
+    }
+
+    // Function to calculate the score for a URL based on query words
+    private static double calculateScore(String url, String[] queryWords) {
+        double score = 0;
+        String query = Arrays.toString(queryWords).toLowerCase();
+        for (String queryWord : queryWords) {
+            if (url.toLowerCase().contains(queryWord.toLowerCase())) {
+                score += 1; // Add one point for each query word found in the URL
+            }
+        }
+        return score;
+    }
     public static void calculateIDF() {
         MongoCollection<Document> indexes = (new MongoDatabase()).getCollection("Indexes");
         MongoCollection<Document> content = (new MongoDatabase()).getCollection("Content");
@@ -154,13 +177,17 @@ public class Ranker {
                 currDoc.put("popularity", popularity);
             }
             numberOfIterations--;
+            System.out.println("Remindar iterations : " + numberOfIterations);
         }
+        int c=0;
         for(Document doc: documents) {
             collection.updateOne(
                     Filters.eq("_id",  doc.getObjectId("_id")),
                     new Document("$set", new Document("popularity", doc.getDouble("popularity"))),
                     new UpdateOptions().upsert(true)
             );
+            System.out.println("Done doc number: "+ ++c);
         }
     }
+
 }
