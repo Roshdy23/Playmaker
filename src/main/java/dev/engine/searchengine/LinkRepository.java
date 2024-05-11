@@ -1,13 +1,17 @@
 package dev.engine.searchengine;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import jakarta.annotation.PostConstruct;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.print.Doc;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static dev.engine.searchengine.Ranker.rankPages;
@@ -47,21 +51,47 @@ public class LinkRepository {
         return ret;
     }
     void addQueryForSuggestions(String query) {
-        prvQ.insertOne(new Document("query", query));
+        boolean check = false;
+        for(Document doc: previousQueriesList) {
+            if(doc.getString("query").equals(query)) {
+                int newCount = doc.getInteger("count")+1;
+                prvQ.updateOne(
+                        Filters.eq("_id",  doc.getObjectId("_id")),
+                        new Document("$set", new Document("count", newCount)),
+                        new UpdateOptions().upsert(true)
+                );
+                check = true;
+                break;
+            }
+        }
+        if(!check) {
+            Document newDocument = new Document("query", query)
+                    .append("count", 1);
+            prvQ.insertOne(newDocument);
+        }
         MongoDatabase mongodb = new MongoDatabase();
         prvQ = mongodb.getCollection("previousQueries");
         previousQueriesList = prvQ.find().into(new ArrayList<>());
     }
     List<String> prevMatchedQueries(String query) {
-        List<String> ret = new ArrayList<>();
-        int c=0;
+        List<Document> ret = new ArrayList<>();
         for(Document doc: previousQueriesList) {
             if(doc.getString("query").startsWith(query)) {
-                ret.add(doc.getString("query"));
-                ++c;
+                ret.add(doc);
             }
-            if(c==5) break;
         }
-        return ret;
+        Comparator<Document> comparator = (doc1, doc2) -> {
+            int score1 = doc1.getInteger("count");
+            int score2 = doc2.getInteger("count");
+            return Integer.compare(score2, score1);
+        };
+        ret.sort(comparator);
+        List<String> res = new ArrayList<>();
+        int c=0;
+        for(Document doc: ret) {
+            res.add(doc.getString("query"));
+            if(++c == 6) break;
+        }
+        return res;
     }
 }

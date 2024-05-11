@@ -19,7 +19,7 @@ public class LinkController {
         return linkRepository.search(query);
     }
     @CrossOrigin
-    @GetMapping("/prvQueries/{query}")
+    @GetMapping("prvQueries/{query}")
     List<String> prvQueries(@PathVariable String query) {
         return linkRepository.prevMatchedQueries(query);
     }
