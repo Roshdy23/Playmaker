@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 
 const StateContext = createContext();
-const baseUrl = ' http://localhost:8080/api/queryquest/';  // this should be backend api 
+const baseUrl = 'http://localhost:8080/api/queryquest/';  // this should be backend api 
 
 export const StateContextProvider = ({ children }) => {
   const [results, setResults] = useState([]);
@@ -47,26 +47,9 @@ export const StateContextProvider = ({ children }) => {
     
     // }); 
     // fetch(`${baseUrl}${url}`).then(res =>res.json).then(data =>setResults(data));
-    const temp = 
-    [
-      "sug1",
-      "sug2",
-      "sug1",
-      "sug2",
-      "sug1",
-      "sug2",
-      "sug1",
-      "sug2",
-      "sug1",
-      "sug2",
-      "sug1",
-      "sug2",
-      "sug1",
-      "sug2",
-    ]
+    
+    fetch(`http://localhost:8080/api/queryquest/prvQueries/${url}`).then(res =>res.json).then(data => Object.keys(data).length<=10?setSugs(data):setSugs(data.slice(0,9)));
 
-    console.log(Object.keys(temp));
-    Object.keys(temp).length>10?setSugs(temp.slice(0,9)): setSugs(temp);
   
     // const data = await res.json();
     // console.log(data);
