@@ -22,7 +22,14 @@ export const StateContextProvider = ({ children }) => {
     //   method: 'GET',
     
     // }); 
+    if(url!=="")
     fetch(`${baseUrl}${url}`).then(res =>res.json()).then(data =>setResults(data));
+  else{
+    const temp = [
+
+    ]
+    setResults(temp);
+  }
     
     // const data =[
     //   {
@@ -70,7 +77,14 @@ export const StateContextProvider = ({ children }) => {
     // }); 
     // fetch(`${baseUrl}${url}`).then(res =>res.json).then(data =>setResults(data));
     
+    if(url !=="")
     fetch(`http://localhost:8080/api/queryquest/prvQueries/${url}`).then(res =>res.json()).then(data => Object.keys(data).length<=10?setSugs(data):setSugs(data.slice(0,9)));
+  else{
+    const temp = [
+
+    ];
+    setSugs(temp);
+  }
       // const temp = [
       //   "sug1",
       //   "sug2",
