@@ -55,13 +55,22 @@ public class Ranker {
 //        }
         // 4- ADD URL SCORE
         List<Document> ret = searchUrls(scoredURLs, query.split("\\s+"));
+        Set<String> uniqueDocuments = new HashSet<>();
+        List<Document> rett = new ArrayList<>();
+        for(Document doc: ret) {
+            if(uniqueDocuments.contains(doc.getString("url"))) continue;
+            if(doc.getString("url").startsWith("https")) {
+                uniqueDocuments.add(doc.getString("url"));
+                rett.add(doc);
+            }
+        }
         Comparator<Document> comparator = (doc1, doc2) -> {
             double score1 = doc1.getDouble("score");
             double score2 = doc2.getDouble("score");
             return Double.compare(score2, score1);
         };
-        ret.sort(comparator);
-        return ret.subList(0, Math.min(ret.size(), 200));
+        rett.sort(comparator);
+        return rett.subList(0, Math.min(ret.size(), 200));
     }
     public static List<Document> AddScoreForPages(List<Document> urls, String query) {
 //        MongoCollection<Document> indexes = (new MongoDatabase()).getCollection("Indexes");
