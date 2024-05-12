@@ -21,7 +21,7 @@ export const Results = () => {
   useEffect(() => {
     
       if(searchTerm !=='')
-        getResults(`?query=${searchTerm}`);
+        getResults(`${searchTerm}`);
      
     
   
