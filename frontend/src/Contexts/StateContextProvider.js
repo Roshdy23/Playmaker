@@ -8,6 +8,9 @@ export const StateContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTime, setSearchTime] = useState(0);
+  const [searchTerm2, setSearchTerm2] = useState('');
+
+  const [Sugs, setSugs] = useState([]);
 
   const getResults = async (url) => {
     const currentTime = performance.now();
@@ -32,8 +35,48 @@ export const StateContextProvider = ({ children }) => {
     setLoading(false);
   };
 
+  
+  const getSugs= async (url) => {
+   
+  
+ 
+    console.log(url);
+
+    // const res = await fetch(`${baseUrl}${url}`, {
+    //   method: 'GET',
+    
+    // }); 
+    // fetch(`${baseUrl}${url}`).then(res =>res.json).then(data =>setResults(data));
+    const temp = 
+    [
+      "sug1",
+      "sug2",
+      "sug1",
+      "sug2",
+      "sug1",
+      "sug2",
+      "sug1",
+      "sug2",
+      "sug1",
+      "sug2",
+      "sug1",
+      "sug2",
+      "sug1",
+      "sug2",
+    ]
+
+    console.log(Object.keys(temp));
+    Object.keys(temp).length>10?setSugs(temp.slice(0,9)): setSugs(temp);
+  
+    // const data = await res.json();
+    // console.log(data);
+    // setResults(data);
+
+
+  };
+
   return (
-    <StateContext.Provider value={{ getResults, results, searchTerm, setSearchTerm, loading,searchTime, setSearchTime }}>
+    <StateContext.Provider value={{ getResults, results, searchTerm, setSearchTerm, loading,searchTime, setSearchTime,Sugs,getSugs,searchTerm2,setSearchTerm2,setSugs }}>
       {children}
     </StateContext.Provider>
   );
