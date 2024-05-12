@@ -16,6 +16,7 @@ const nwfunc = (par) => {
    setSearchTerm(par);
 
    setText('');
+   nwfunc2("");
   };
 
 
@@ -45,6 +46,7 @@ const nwfunc = (par) => {
         
       
        { Sugs?.map((suggestion, index) => (
+       
     <button key={index} className="block sm:w-96 w-80 h-10 dark:bg-gray-200 bg-white  p-5px mt-0 pt-0 shadow-sm outline-none pl-6 text-gray-500 text-sm ml-0 mt-0 hover:shadow-lg hover:text-black text-left " onClick={()=>nwfunc2(suggestion)} >{suggestion}</button>
   ))
 }

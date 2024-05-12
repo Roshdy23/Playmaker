@@ -43,10 +43,10 @@ console.log(results.results);
             <div key={index} className="md:w-2/5 w-full">
               <a href={url} target="_blank" rel="noreferrer">
                 <p className="text-sm">{url.length > 30 ? url.substring(0, 30) : url}</p>
-                <p className="text-lg hover:underline dark:text-blue-300 text-blue-700  ">{title}</p>
+                <p className="text-lg hover:underline dark:text-blue-300 text-blue-700  ">{title.length >30 ? title.substring(0,30):title }</p>
                 <p className='text-md'>
               
-              {/* {description.length > 200 ? description=description.substring(0, 200) : description = description}  */}
+              {description.length > 200 ? description=description.substring(0, 200) : description = description} 
         
               {description?.split(' ').map((word, index) => (
 
